@@ -52,19 +52,7 @@ df.drop(columns=['kronendurchmesser_z', 'stammumfang_z'])
 
 
 # ## Visualization
-
-# ### Bar Plot: Trunk Circumference for Species category
 ## Visualizations with SeaBorn
-# Plot, with the standard deviation as error bars
-fig_trunk = plt.figure(figsize=(12, 8))
-sns.barplot(x='gattung_deutsch', y='stammumfang_cm', data=df.query('stammumfang_cm>0'), ci='sd')
-plt.xticks(rotation=90)
-plt.title('Trunk circumference for different species')
-plt.ylabel('Trunk circumference in cm')
-plt.xlabel('Tree species') 
-# Display the plot in Streamlit
-st.pyplot(fig_trunk)
-
 
 # ### Pie Chart: Species Category Distribution
 # A pie chart of the tree categories
@@ -76,6 +64,7 @@ bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
 bf.plot.pie()
 plt.title('Hamburg Tree Species Distribution')
 plt.ylabel('')
+# Display the plot in Streamlit
 st.pyplot(fig_pie)
 
 
@@ -83,7 +72,7 @@ fig_chestnut = plt.figure(figsize=(12,4))
 sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Kastanie")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
 plt.title('Chestnut trees in Hamburg')
 plt.ylabel('Trunk diameter in cm')
-pltxlabel('Year of planting')
+plt.xlabel('Year of planting')
 st.pyplot(fig_chestnut)
 
 
@@ -98,6 +87,17 @@ st.pyplot(fig_oak)
 
 # There seem to be some outliers - identify them and clean them
 # ....
+
+
+# ### Bar Plot: Trunk Circumference for Species category
+# Plot, with the standard deviation as error bars
+fig_trunk = plt.figure(figsize=(12, 8))
+sns.barplot(x='gattung_deutsch', y='stammumfang_cm', data=df.query('stammumfang_cm>0'), ci='sd')
+plt.xticks(rotation=90)
+plt.title('Trunk circumference for different species')
+plt.ylabel('Trunk circumference in cm')
+plt.xlabel('Tree species') 
+st.pyplot(fig_trunk)
 
 
 
