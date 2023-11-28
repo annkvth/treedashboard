@@ -1,0 +1,3 @@
+Das - Online-Straßenbaumkataster - umfasst die flächendeckende Darstellung der Bäume auf öffentlichen Straßenflurstücken mit wesentlichen Stammattributen sowie die Daten der Hamburger Port Authority, die in einer eigenen Datenbank gespeichert werden. Jedem Baum sind die folgenden Datenfelder zugeordnet: Standort, Gattung/Art, Pflanzjahr, Kronendurchmesser und Stammumfang.  Diese im Rahmen regelmäßiger Baumkontrollen erfassten Daten werden für das Internet jährlich mit Stand 1. Januar aktualisiert.
+
+https://api.hamburg.de/datasets/v1/strassenbaumkataster
