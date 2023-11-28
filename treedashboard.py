@@ -51,63 +51,75 @@ df.rename(columns={'kronendurchmesser': 'kronendurchmesser_m', 'stammumfang': 's
 df.drop(columns=['kronendurchmesser_z', 'stammumfang_z'])
 
 
-# ## Visualization
-## Visualizations with SeaBorn
-
-# ### Pie Chart: Species Category Distribution
-# A pie chart of the tree categories
-fig_pie = plt.figure(figsize=(12, 8))
-tresh = len(df)/100
-acount = df['gattung_deutsch'].value_counts()
-bf = acount[acount > tresh]
-bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
-bf.plot.pie()
-plt.title('Hamburg Tree Species Distribution')
-plt.ylabel('')
-# Display the plot in Streamlit
-st.pyplot(fig_pie)
+# ## Setup streamlit
+# use wide mode
+st.set_page_config(layout="wide")
+ 
+st.title('Trees in Hamburg')
+st.text('Data source: Freie und Hansestadt Hamburg, Behörde für Umwelt, Klima, Energie und Agrarwirtschaft')
 
 
-fig_chestnut = plt.figure(figsize=(12,4)) 
-sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Kastanie")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
-plt.title('Chestnut trees in Hamburg')
-plt.ylabel('Trunk diameter in cm')
-plt.xlabel('Year of planting')
-st.pyplot(fig_chestnut)
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    ## Visualizations with SeaBorn
+    
+    # ### Pie Chart: Species Category Distribution
+    # A pie chart of the tree categories
+    fig_pie = plt.figure(figsize=(12, 8))
+    tresh = len(df)/100
+    acount = df['gattung_deutsch'].value_counts()
+    bf = acount[acount > tresh]
+    bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
+    bf.plot.pie()
+    plt.title('Hamburg Tree Species Distribution')
+    plt.ylabel('')
+    # Display the plot in Streamlit
+    st.pyplot(fig_pie)
 
 
-
-fig_oak = plt.figure(figsize=(12,4)) 
-sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Eiche")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
-plt.title('Oak trees in Hamburg')
-plt.ylabel('Trunk diameter in cm')
-plt.xlabel('Year of planting')
-st.pyplot(fig_oak)
+with col2:
+    fig_chestnut = plt.figure(figsize=(12,4)) 
+    sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Kastanie")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
+    plt.title('Chestnut trees in Hamburg')
+    plt.ylabel('Trunk diameter in cm')
+    plt.xlabel('Year of planting')
+    st.pyplot(fig_chestnut)
+    
+    
+    
+    fig_oak = plt.figure(figsize=(12,4)) 
+    sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Eiche")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
+    plt.title('Oak trees in Hamburg')
+    plt.ylabel('Trunk diameter in cm')
+    plt.xlabel('Year of planting')
+    st.pyplot(fig_oak)
 
 
 # There seem to be some outliers - identify them and clean them
 # ....
 
 
-# ### Bar Plot: Trunk Circumference for Species category
-# Plot, with the standard deviation as error bars
-fig_trunk = plt.figure(figsize=(12, 8))
-sns.barplot(x='gattung_deutsch', y='stammumfang_cm', data=df.query('stammumfang_cm>0'), ci='sd')
-plt.xticks(rotation=90)
-plt.title('Trunk circumference for different species')
-plt.ylabel('Trunk circumference in cm')
-plt.xlabel('Tree species') 
-st.pyplot(fig_trunk)
-
-
-
-# ### Histogram: Treetop diameter Distribution
-# Plot a histogram of the treetop diameter
-fig_treetop = plt.figure(figsize=(12, 8))
-sns.displot(df.query('kronendurchmesser_m>0')['kronendurchmesser_m'], bins=20, kde=False)
-plt.title('Treetop diameter')
-plt.ylabel('Number of trees')
-plt.xlabel('Treetop diameter (m)')
-st.pyplot(fig_treetop)
+with col3:
+    # ### Bar Plot: Trunk Circumference for Species category
+    # Plot, with the standard deviation as error bars
+    fig_trunk = plt.figure(figsize=(12, 8))
+    sns.barplot(x='gattung_deutsch', y='stammumfang_cm', data=df.query('stammumfang_cm>0'), ci='sd')
+    plt.xticks(rotation=90)
+    plt.title('Trunk circumference for different species')
+    plt.ylabel('Trunk circumference in cm')
+    plt.xlabel('Tree species') 
+    st.pyplot(fig_trunk)
+    
+    
+    
+    # ### Histogram: Treetop diameter Distribution
+    # Plot a histogram of the treetop diameter
+    fig_treetop = plt.figure(figsize=(12, 8))
+    sns.distplot(df.query('kronendurchmesser_m>0')['kronendurchmesser_m'], bins=20, kde=None)
+    plt.title('Treetop diameter')
+    plt.ylabel('Number of trees')
+    plt.xlabel('Treetop diameter (m)')
+    st.pyplot(fig_treetop)
 
 
