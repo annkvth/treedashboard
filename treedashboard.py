@@ -100,7 +100,7 @@ st.header('Pick a tree species you want to learn more about:')
 
 # User selects a tree species using a selectbox
 default_value = 'Linde'  # Set your default value here
-default_gattung_index = df['gattung_deutsch'].unique().tolist().index(default_value)
+default_gattung_index = df['gattung_deutsch'].dropna().unique().tolist().index(default_value)
 selected_gattung = st.selectbox('Select a tree species:', df['gattung_deutsch'].unique(), index=default_gattung_index)
 
 # Filter the DataFrame based on user selection
