@@ -65,7 +65,8 @@ sns.set_palette('crest')  # You can change 'husl' to other available palettes
 st.title('Trees in Hamburg')
 st.text('Data source: Freie und Hansestadt Hamburg, Behörde für Umwelt, Klima, Energie und Agrarwirtschaft')
 
-st.text('Which tree species are planted along public roads in Hamburg?')
+st.text("")
+st.header('Which tree species are planted along public roads in Hamburg?')
 colA1, colA2 = st.columns(2)
 
 with colA1:
@@ -93,7 +94,9 @@ with colA2:
     st.pyplot(fig_age)
 
 
-st.text('Pick a tree species you want to learn more about:')
+st.divider()    
+st.text("")
+st.header('Pick a tree species you want to learn more about:')
 
 # User selects a tree species using a selectbox
 default_value = 'Linde'  # Set your default value here
@@ -134,7 +137,9 @@ with colB2:
     st.pyplot(fig_treetop)
 
 
-    
+st.divider()    
+st.text("")
+st.header('How large are the street trees in Hamburg?')
     
 
 fig_color = plt.figure(figsize=(12, 8))
@@ -163,8 +168,9 @@ plt.legend(handles=legend_entries, title='Tree species', loc='center left', bbox
 st.pyplot(fig_color)
 
 
-
-st.text('A closer look at the big trees')
+st.divider()    
+st.text("")
+st.header('A closer look at the big trees')
 
 fig_color2 = plt.figure(figsize=(12, 8))
 ## filtering condition to include species with stammumfang larger than 500 or kronendurchmesser larger than 35
