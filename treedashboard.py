@@ -60,32 +60,47 @@ st.title('Trees in Hamburg')
 st.text('Data source: Freie und Hansestadt Hamburg, Behörde für Umwelt, Klima, Energie und Agrarwirtschaft')
 
 st.text('Which tree species are planted along public roads in Hamburg?')
-# ### Pie Chart: Species Category Distribution
-# A pie chart of the tree categories
-fig_pie = plt.figure(figsize=(12, 8))
-tresh = len(df)/100
-acount = df['gattung_deutsch'].value_counts()
-bf = acount[acount > tresh]
-bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
-bf.plot.pie()
-plt.title('Hamburg Tree Species Distribution')
-plt.ylabel('')
-# Display the plot in Streamlit
-st.pyplot(fig_pie)
+colA1, colA2 = st.columns(2)
+
+with colA1:
+    # ### Pie Chart: Species Category Distribution
+    # A pie chart of the tree categories
+    fig_pie = plt.figure(figsize=(12, 8))
+    tresh = len(df)/100
+    acount = df['gattung_deutsch'].value_counts()
+    bf = acount[acount > tresh]
+    bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
+    bf.plot.pie()
+    plt.title('Hamburg Tree Species Distribution')
+    plt.ylabel('')
+    # Display the plot in Streamlit
+    st.pyplot(fig_pie)
+
+with colA2:
+    # ### Histogram: age Distribution
+    fig_age = plt.figure()
+    sns.distplot(2023 - df.query('pflanzjahr>1000').query('pflanzjahr<=2023')['pflanzjahr'], kde=None)
+    plt.title(f'Age of street trees in Hamburg')
+    plt.ylabel('Number of trees')
+    plt.xlabel('Age of the trees')
+    #plt.yscale('log')
+    st.pyplot(fig_age)
 
 
 st.text('Pick a tree species you want to learn more about:')
 
 # User selects a tree species using a selectbox
-selected_gattung = st.selectbox('Select a tree species:', df['gattung_deutsch'].unique())
+default_value = 'Linde'  # Set your default value here
+default_gattung_index = df['gattung_deutsch'].unique().tolist().index(default_value)
+selected_gattung = st.selectbox('Select a tree species:', df['gattung_deutsch'].unique(), index=default_gattung_index)
 
 # Filter the DataFrame based on user selection
 filtered_df = df[df['gattung_deutsch'] == selected_gattung]
 
     
-col1, col2 = st.columns(2)
+colB1, colB2 = st.columns(2)
 
-with col1:
+with colB1:
    
     # Plotting with Seaborn boxplot
     fig_oak = plt.figure() #figsize=(12, 7) 
@@ -93,6 +108,7 @@ with col1:
     plt.title(f'{selected_gattung} trees in Hamburg')
     plt.ylabel('Trunk diameter in cm')
     plt.xlabel('Year of planting')
+    plt.xticks(rotation=45)  # Adjust the rotation angle as needed
     st.pyplot(fig_oak)
 
   
@@ -100,7 +116,7 @@ with col1:
 # ....
 
 
-with col2:
+with colB2:
     # ### Histogram: Treetop diameter Distribution
     # Plot a histogram of the treetop diameter
     fig_treetop = plt.figure()
@@ -108,7 +124,7 @@ with col2:
     plt.title(f'{selected_gattung} trees in Hamburg')
     plt.ylabel('Number of trees')
     plt.xlabel('Treetop diameter (m)')
-    plt.yscale('log')
+    #plt.yscale('log')
     st.pyplot(fig_treetop)
 
 
