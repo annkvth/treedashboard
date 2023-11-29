@@ -55,7 +55,13 @@ df.drop(columns=['kronendurchmesser_z', 'stammumfang_z'])
 # ## Setup streamlit
 # use wide mode
 st.set_page_config(layout="wide")
- 
+
+
+# Set a specific Seaborn color palette
+sns.set_palette('crest')  # You can change 'husl' to other available palettes
+#sns.color_palette("cubehelix", as_cmap=True)
+#sns.cubehelix_palette(start=.5, rot=-.75, as_cmap=True)
+
 st.title('Trees in Hamburg')
 st.text('Data source: Freie und Hansestadt Hamburg, Behörde für Umwelt, Klima, Energie und Agrarwirtschaft')
 
