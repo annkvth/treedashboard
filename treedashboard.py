@@ -59,59 +59,59 @@ st.set_page_config(layout="wide")
 st.title('Trees in Hamburg')
 st.text('Data source: Freie und Hansestadt Hamburg, Behörde für Umwelt, Klima, Energie und Agrarwirtschaft')
 
+st.text('Which tree species are planted along public roads in Hamburg?')
+# ### Pie Chart: Species Category Distribution
+# A pie chart of the tree categories
+fig_pie = plt.figure(figsize=(12, 8))
+tresh = len(df)/100
+acount = df['gattung_deutsch'].value_counts()
+bf = acount[acount > tresh]
+bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
+bf.plot.pie()
+plt.title('Hamburg Tree Species Distribution')
+plt.ylabel('')
+# Display the plot in Streamlit
+st.pyplot(fig_pie)
 
-col1, col2, col3 = st.columns(3)
+
+st.text('Pick a tree species you want to learn more about:')
+
+# User selects a tree species using a selectbox
+selected_gattung = st.selectbox('Select a tree species:', df['gattung_deutsch'].unique())
+
+# Filter the DataFrame based on user selection
+filtered_df = df[df['gattung_deutsch'] == selected_gattung]
+
+    
+col1, col2 = st.columns(2)
 
 with col1:
-    ## Visualizations with SeaBorn
-    
-    # ### Pie Chart: Species Category Distribution
-    # A pie chart of the tree categories
-    fig_pie = plt.figure(figsize=(12, 8))
-    tresh = len(df)/100
-    acount = df['gattung_deutsch'].value_counts()
-    bf = acount[acount > tresh]
-    bf['Less-than-1-percent'] = acount[acount <= tresh].sum()
-    bf.plot.pie()
-    plt.title('Hamburg Tree Species Distribution')
-    plt.ylabel('')
-    # Display the plot in Streamlit
-    st.pyplot(fig_pie)
-
-
-with col2:
-    fig_chestnut = plt.figure(figsize=(12,4)) 
-    sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Kastanie")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
-    plt.title('Chestnut trees in Hamburg')
-    plt.ylabel('Trunk diameter in cm')
-    plt.xlabel('Year of planting')
-    st.pyplot(fig_chestnut)
-    
-    
-    
-    fig_oak = plt.figure(figsize=(12,4)) 
-    sns.boxplot( x=df[(df["pflanzjahr"]> 1800) & (df["pflanzjahr"]< 2030) & (df["gattung_deutsch"] == "Eiche")]["pflanzjahr"].round(-1), y=df["stammumfang_cm"] )
-    plt.title('Oak trees in Hamburg')
+   
+    # Plotting with Seaborn boxplot
+    fig_oak = plt.figure() #figsize=(12, 7) 
+    sns.boxplot(x=filtered_df["pflanzjahr"].round(-1), y=filtered_df["stammumfang_cm"])
+    plt.title(f'{selected_gattung} trees in Hamburg')
     plt.ylabel('Trunk diameter in cm')
     plt.xlabel('Year of planting')
     st.pyplot(fig_oak)
 
-
+  
 # There seem to be some outliers - identify them and clean them
 # ....
 
 
-with col3:
-    # ### Bar Plot: Trunk Circumference for Species category
-    # Plot, with the standard deviation as error bars
-    fig_trunk = plt.figure(figsize=(12, 8))
-    sns.barplot(x='gattung_deutsch', y='stammumfang_cm', data=df.query('stammumfang_cm>0'), ci='sd')
-    plt.xticks(rotation=90)
-    plt.title('Trunk circumference for different species')
-    plt.ylabel('Trunk circumference in cm')
-    plt.xlabel('Tree species') 
-    st.pyplot(fig_trunk)
-    
+with col2:
+    # ### Histogram: Treetop diameter Distribution
+    # Plot a histogram of the treetop diameter
+    fig_treetop = plt.figure()
+    sns.distplot(filtered_df.query('kronendurchmesser_m>0')['kronendurchmesser_m'], bins=20, kde=None)
+    plt.title(f'{selected_gattung} trees in Hamburg')
+    plt.ylabel('Number of trees')
+    plt.xlabel('Treetop diameter (m)')
+    plt.yscale('log')
+    st.pyplot(fig_treetop)
+
+
     
     
 
@@ -128,15 +128,15 @@ for gattung, color in color_dict.items():
     plt.scatter(subset_df['stammumfang_cm'], subset_df['kronendurchmesser_m'], c=color, label=gattung)
 
 # Add labels and a legend
-plt.xlabel('Stammumfang')
-plt.ylabel('Kronendurchmesser')
-plt.title('Stammumfang vs. Kronendurchmesser')
+plt.xlabel('Trunk circumference in cm')
+plt.ylabel('Treetop diameter in m')
+plt.title('Trunk circumference in cm vs. Treetop diameter in m')
 
 # Create a legend with unique entries
 legend_entries = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10, label=label)
                   for label, color in color_dict.items()]
 
-plt.legend(handles=legend_entries, title='Gattung Deutsch', loc='center left', bbox_to_anchor=(1, 0.5), ncol=3)
+plt.legend(handles=legend_entries, title='Tree species', loc='center left', bbox_to_anchor=(1, 0.5), ncol=3)
 
 st.pyplot(fig_color)
 
@@ -184,24 +184,27 @@ for i, row in highlighted_points.iterrows():
 adjust_text(texts)
 
 # Add labels and a legend
-plt.xlabel('Stammumfang')
-plt.ylabel('Kronendurchmesser')
-plt.title('Stammumfang vs. Kronendurchmesser (Filtered)')
+plt.xlabel('Trunk circumference in cm')
+plt.ylabel('Treetop diameter in m')
+plt.title('Trunk circumference in cm vs. Treetop diameter in m (Filtered)')
 
 # Create a legend with unique entries and move it outside the figure
 legend_entries = [plt.Line2D([0], [0], marker=marker, color='w', markerfacecolor=color, markersize=10, label=label)
                   for label, (color, marker) in zip(color_dict.keys(), zip(colors, markers))]
 
-plt.legend(handles=legend_entries, title='Gattung Deutsch', loc='center left', bbox_to_anchor=(1, 0.5))
+plt.legend(handles=legend_entries, title='Tree species', loc='center left', bbox_to_anchor=(1, 0.5))
 st.pyplot(fig_color2)
 
 
 
-# ### Histogram: Treetop diameter Distribution
-# Plot a histogram of the treetop diameter
-fig_treetop = plt.figure(figsize=(12, 8))
-sns.distplot(df.query('kronendurchmesser_m>0')['kronendurchmesser_m'], bins=20, kde=None)
-plt.title('Treetop diameter')
-plt.ylabel('Number of trees')
-plt.xlabel('Treetop diameter (m)')
-st.pyplot(fig_treetop)
+# ### Bar Plot: Trunk Circumference for Species category
+# Plot, with the standard deviation as error bars
+fig_trunk = plt.figure(figsize=(12, 8))
+sns.barplot(x='gattung_deutsch', y='stammumfang_cm', data=df.query('stammumfang_cm>0'), ci='sd')
+plt.xticks(rotation=90)
+plt.title('Trunk circumference for different species')
+plt.ylabel('Trunk circumference in cm')
+plt.xlabel('Tree species') 
+st.pyplot(fig_trunk)
+    
+    
